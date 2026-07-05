@@ -1,0 +1,92 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.This-Is-Hellgate/secondeye-mcp-unblock",
+  "title": "Second Eyes Agent Workflow Services",
+  "description": "Workflow diagnostics, capability routing, and x402 settlement for MCP-compatible agents.",
+  "version": "1.2.6",
+  "websiteUrl": "https://secondeyesai.com/api/bar",
+  "repository": {
+    "url": "https://github.com/This-Is-Hellgate/second-eyes-ai",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@secondeyes/mcp-unblock",
+      "version": "1.2.6",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SECOND_EYE_BASE_URL",
+          "description": "Second Eyes service base URL",
+          "default": "https://secondeyesai.com",
+          "isRequired": false
+        },
+        {
+          "name": "MCP_X402_WALLET_KEY",
+          "description": "EVM private key (0x…) for auto USDC payment on 402. SECURITY: MCP process can drain this wallet — use a dedicated low-balance payer.",
+          "isRequired": false
+        },
+        {
+          "name": "MCP_X402_MAX_SPEND_USD",
+          "description": "Per-call spending cap (default 0.50)",
+          "default": "0.50",
+          "isRequired": false
+        },
+        {
+          "name": "MCP_X402_SESSION_MAX_USD",
+          "description": "Process lifetime spending cap (default 2.00)",
+          "default": "2.00",
+          "isRequired": false
+        },
+        {
+          "name": "MCP_X402_ALLOW_SLUGS",
+          "description": "Comma-separated capability slugs allowed for compatibility auto-pay. Default (unset) or * enables every zero-argument capability priced at or below $0.05 USDC. Input-requiring transcription and extraction routes remain excluded unless explicitly selected. Spending caps remain authoritative.",
+          "isRequired": false
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://secondeyesai.com/api/bar"
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "search_tags": [
+        "mcp",
+        "401",
+        "403",
+        "github-mcp",
+        "cursor-mcp",
+        "PAT",
+        "oauth",
+        "unauthorized",
+        "wiring",
+        "stdio",
+        "sse",
+        "x402",
+        "usdc",
+        "base",
+        "agent",
+        "unblock",
+        "claim-check",
+        "should-i-pay",
+        "proof",
+        "receipt"
+      ],
+      "proof_url": "https://secondeyesai.com/api/bar/proof",
+      "payment_ledger": "https://secondeyesai.com/api/bar/proof/payments",
+      "how_to_pay": "https://secondeyesai.com/llms.txt",
+      "payment_activation": "https://secondeyesai.com/api/bar",
+      "llms_txt": "https://secondeyesai.com/llms.txt",
+      "agent_card": "https://secondeyesai.com/.well-known/agent-card.json",
+      "mcp_discovery": "https://secondeyesai.com/.well-known/mcp.json"
+    }
+  }
+}

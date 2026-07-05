@@ -1,0 +1,59 @@
+{
+  "name": "@secondeyes/mcp-unblock",
+  "version": "1.2.6",
+  "mcpName": "io.github.This-Is-Hellgate/secondeye-mcp-unblock",
+  "description": "Agent workflow diagnostics and capability routing over MCP with x402 settlement on Base",
+  "type": "module",
+  "bin": {
+    "secondeye-mcp-unblock": "src/index.js"
+  },
+  "files": [
+    "src",
+    "server.json",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "keywords": [
+    "second eyes",
+    "agent workflow",
+    "secondeyes",
+    "secondeyesai",
+    "mcp",
+    "github-mcp",
+    "cursor-mcp",
+    "401",
+    "PAT",
+    "x402",
+    "usdc",
+    "agent",
+    "workflow diagnostics",
+    "capability routing"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/This-Is-Hellgate/second-eyes-ai/tree/main/packages/secondeye-mcp",
+  "bugs": {
+    "url": "https://github.com/This-Is-Hellgate/second-eyes-ai/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/This-Is-Hellgate/second-eyes-ai.git",
+    "directory": "packages/secondeye-mcp"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@x402/evm": "^2.13.0",
+    "@x402/fetch": "^2.13.0",
+    "viem": "^2.51.2",
+    "zod": "^4.4.3"
+  },
+  "scripts": {
+    "test": "node ../../test/x402-wallet/registry-manifest.test.mjs && node ../../test/x402-wallet/mcp-folder-hygiene.test.mjs && node ../../test/x402-wallet/spec-authority.test.mjs && node ../../test/x402-wallet/autopay-defaults.test.mjs && node ../../test/x402-wallet/tool-metadata.test.mjs && node ../../test/x402-wallet/order-routing.test.mjs",
+    "test:mcp-pay": "node scripts/mcp-order-pay-canary.mjs"
+  }
+}

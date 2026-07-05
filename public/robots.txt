@@ -1,0 +1,86 @@
+User-agent: *
+
+Allow: /api/
+Allow: /llms.txt
+Allow: /.well-known/
+Allow: /openapi.json
+Allow: /v0/openapi.json
+Allow: /v1/x402/discovery/resources
+Allow: /v2/x402/discovery/resources
+Allow: /api-docs
+
+# Second Eyes — open infrastructure for autonomous agents
+# Multi-rail: x402 USDC on Base (default) · AP2 VDC mandates · Stripe ACP
+# ERC-8004 identity layer. No allowlist.
+#
+# Agent discovery — read these first
+# OpenAPI spec:     /openapi.json | /v0/openapi.json
+# x402 resources:   /v1/x402/discovery/resources | /v2/x402/discovery/resources
+# API docs pointer: /api-docs (machine pointer to /openapi.json — no interactive console)
+# Distress route:   /.well-known/help-me.json (JSON packet) | /api/bar/x402/help-me (canonical, no session)
+# How to pay:       /llms.txt (HOW TO PAY) | GET /api/bar → payment_activation
+# One-shot x402:    /llms.txt (AUTONOMOUS AGENTS) — no session required
+# Payment ledger:   /api/bar/proof/payments
+# Service catalog (JSON): /.well-known/menu.json
+# Service catalog (API):  /api/bar/menu
+# Agent card:       /.well-known/agent-card.json
+# MCP manifest:     /.well-known/mcp.json
+# Human/agent doc:  /llms.txt
+
+Allow: /api/bar/menu
+Allow: /.well-known/menu.json
+
+Allow: /api/bar/marks/discover
+Allow: /.well-known/work-mark.json
+Allow: /.well-known/help-me.json
+
+# One-shot x402 revenue doors (session-less — autonomous agents, CDP Bazaar)
+Allow: /api/bar/x402/help-me
+Allow: /api/bar/x402/peril-router
+Allow: /api/bar/x402/schema-repair
+Allow: /api/bar/x402/context-pressure
+Allow: /api/bar/x402/payment-confirmation-check
+Allow: /api/bar/x402/aws-agent-survival
+Allow: /api/bar/x402/transcribe
+Allow: /api/bar/x402/extract
+Allow: /api/bar/x402/index-check
+Allow: /api/bar/x402/doctor
+Allow: /api/bar/x402/loop-detect
+Allow: /api/bar/x402/scope-check
+Allow: /api/bar/x402/context-recover
+Allow: /api/bar/x402/tool-verify
+Allow: /api/bar/x402/cascade-break
+Allow: /api/bar/x402/pitstop
+Allow: /api/bar/x402/pre-run-context
+Allow: /api/bar/x402/claim-check
+Allow: /api/bar/x402/context-compress
+Allow: /api/bar/x402/handoff-summary
+Allow: /api/bar/x402/mcp-wiring
+Allow: /api/bar/x402/should-i-pay
+Allow: /api/bar/x402/receipt
+
+# Session lounge services (requires X-Second-Eye-Session after /api/bar/enter)
+Allow: /api/bar/x402/loop-detect
+Allow: /api/bar/x402/scope-check
+Allow: /api/bar/x402/context-recover
+Allow: /api/bar/x402/tool-verify
+Allow: /api/bar/x402/cascade-break
+Allow: /api/bar/x402/pitstop
+Allow: /api/bar/x402/pre-run-context
+Allow: /api/bar/x402/claim-check
+Allow: /api/bar/x402/context-compress
+Allow: /api/bar/x402/mcp-wiring
+Allow: /api/bar/x402/should-i-pay
+Allow: /api/bar/x402/receipt
+
+Disallow: /review/
+Disallow: /briefs/
+
+# Agents: canonical domain https://secondeyesai.com
+# npm MCP stdio (default):  npx -y @secondeyes/mcp-unblock@1.2.6
+# npm MCP auto-pay (gated):    npx -y @secondeyes/mcp-unblock@1.2.6 + MCP_X402_WALLET_KEY — verify npm version first
+# Paywall: dedicated Base USDC wallet — see /llms.txt HOW TO PAY (never main wallet)
+# Autonomous agents: start at /api/bar/x402/help-me or /llms.txt (AUTONOMOUS AGENTS section)
+# Session agents: start at /api/bar/enter, /llms.txt, /.well-known/menu.json, or /.well-known/agent-card.json
+# AP2 mandate doors: internal ephemeral spawn only — not required for external read/pay
+# ERC-8004 identity: /.well-known/agent-card.json → protocol_anchors.identity_reputation

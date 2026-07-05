@@ -1,0 +1,164 @@
+# Guard against stale discovery metadata: blocks merges that re-introduce
+# x402 v1, network "base", or a package version that drifts from the published
+# @secondeyes/mcp-unblock. See scripts/discovery-consistency-check.mjs.
+
+name: Discovery consistency
+
+on:
+  pull_request:
+    paths:
+      - "public/.well-known/**"
+      - "public/llms.txt"
+      - "packages/secondeye-mcp/package.json"
+      - "packages/secondeye-mcp/server.json"
+      - "packages/secondeye-mcp/README.md"
+      - "packages/secondeye-mcp/src/index.js"
+      - "packages/secondeye-mcp/src/x402-wallet.js"
+      - "packages/secondeye-mcp/package-lock.json"
+      - "test/x402-wallet/**"
+      - "test/x402-extensions/**"
+      - "functions/_lib/x402-extensions.js"
+      - "functions/_lib/mcp-facade.js"
+      - "scripts/discovery-consistency-check.mjs"
+      - "scripts/x402-multinetwork-selftest.mjs"
+      - "scripts/x402-rail-activation-selftest.mjs"
+      - "scripts/x402-verify-logging-selftest.mjs"
+      - "scripts/x402-failure-recovery-selftest.mjs"
+      - "scripts/x402-header-size-selftest.mjs"
+      - "functions/api/bar/x402/**"
+      - "functions/_lib/x402.js"
+      - "functions/_lib/x402-networks.js"
+      - "functions/_lib/discovery.js"
+      # Canonical price source (SERVICE_PRICES / SURVIVAL_MENU / price range) the
+      # consistency check reads — a PR editing only a price here must trigger the
+      # guard so static discovery prices can't go stale until push-to-main fails.
+      - "functions/_lib/lounge/**"
+      - "functions/openapi.json.js"
+      - "functions/v0/openapi.json.js"
+      - "functions/v1/x402/discovery/resources.js"
+      - "functions/v2/x402/discovery/resources.js"
+      - "functions/api-docs.js"
+      - "scripts/discovery-compat-selftest.mjs"
+      - "public/robots.txt"
+      - "functions/_lib/x402-rail-activation.js"
+      - "functions/_lib/x402-payment-log.js"
+      - "functions/_lib/agent-entry.js"
+      - "scripts/x402-facilitator-tests.mjs"
+      - "scripts/polygon-canary.mjs"
+      - "scripts/polygon-canary-preflight.mjs"
+      - "test/x402-facilitator/**"
+      - "config/x402-rail-activations.json"
+      - "scripts/mark-lineage-selftest.mjs"
+      - "scripts/mark-lineage-smoke.mjs"
+      - "scripts/meta-tools-selftest.mjs"
+      - "scripts/session-receipt-selftest.mjs"
+      - "functions/api/bar/receipt.js"
+      - "functions/api/bar/leave.js"
+      - "scripts/help-me-post-selftest.mjs"
+      - "scripts/x402-empty-post-selftest.mjs"
+      - "functions/_lib/bar-pay.js"
+      - "scripts/lounge-sessions-selftest.mjs"
+      - "scripts/grant-product-migrate-selftest.mjs"
+      - "scripts/migrate-grant-product-metadata.mjs"
+      - "seeds/grant-product-metadata.sql"
+      - ".github/workflows/d1-migrate.yml"
+      - "functions/_lib/lounge/sessions.js"
+      - "functions/_lib/marks.js"
+      - "functions/_lib/work-mark.js"
+      - "functions/_lib/lounge/meta-tools.js"
+      - "functions/api/bar/marks/discover.js"
+      - "functions/api/bar/x402/help-me.js"
+      - "functions/api/bar/x402/schema-repair.js"
+      - "functions/api/bar/x402/context-pressure.js"
+      - "functions/api/bar/x402/payment-confirmation-check.js"
+      - "seeds/agent-mark-lineage.sql"
+      - ".github/workflows/discovery-check.yml"
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Validate x402 + package discovery metadata
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run discovery consistency check
+        run: node scripts/discovery-consistency-check.mjs
+
+      - name: Run discovery compat surface self-test
+        run: node scripts/discovery-compat-selftest.mjs
+
+      - name: Run x402 multi-network self-test
+        run: node scripts/x402-multinetwork-selftest.mjs
+
+      - name: Run x402 facilitator harness + Polygon canary mock gates (no spend)
+        run: node scripts/x402-facilitator-tests.mjs
+
+      - name: Run x402 rail-activation gate self-test
+        run: node scripts/x402-rail-activation-selftest.mjs
+
+      - name: Run x402 verify-logging self-test
+        run: node scripts/x402-verify-logging-selftest.mjs
+
+      - name: Run x402 failure-recovery self-test
+        run: node scripts/x402-failure-recovery-selftest.mjs
+
+      - name: Run x402 PAYMENT-REQUIRED header-size self-test
+        run: node scripts/x402-header-size-selftest.mjs
+
+      - name: Run work-mark lineage self-test
+        run: node scripts/mark-lineage-selftest.mjs
+
+      - name: Run meta-tools self-test
+        run: node scripts/meta-tools-selftest.mjs
+
+      - name: Run session receipt self-test
+        run: node scripts/session-receipt-selftest.mjs
+
+      - name: Run help-me POST empty-body self-test
+        run: node scripts/help-me-post-selftest.mjs
+
+      - name: Run x402 empty-POST paywall self-test
+        run: node scripts/x402-empty-post-selftest.mjs
+
+      - name: Run lounge stale-session closure self-test (C-012 / C-023)
+        run: node scripts/lounge-sessions-selftest.mjs
+
+      - name: Run grant-product migration safety self-test (C-024)
+        run: node scripts/grant-product-migrate-selftest.mjs
+
+      - name: Install MCP package dependencies (for autopay/tool-metadata/order-routing tests)
+        run: npm ci
+        working-directory: packages/secondeye-mcp
+
+      - name: Run MCP autopay default + price-match self-test
+        run: node test/x402-wallet/autopay-defaults.test.mjs
+
+      - name: Run MCP tool annotations + outputSchema self-test
+        run: node test/x402-wallet/tool-metadata.test.mjs
+
+      - name: Run MCP order-routing self-test (C-019 / C-020)
+        run: node test/x402-wallet/order-routing.test.mjs
+
+      - name: Run wallet-agent-target routing self-test (no /api/bar/services dead-ends)
+        run: node test/x402-wallet/wallet-target-routes.test.mjs
+
+      - name: Run x402 v2 extension surface self-test (bazaar/identifier/receipt/batch/auth-capture/eip2612)
+        run: node test/x402-extensions/extensions.test.mjs
+
+      - name: Run MCP x402 payment-channel self-test (_meta x402/payment)
+        run: node test/x402-extensions/mcp-payment.test.mjs
+
+      - name: Run Coinbase Python x402 action-provider compatibility self-test
+        run: node test/x402-extensions/coinbase-python-compat.test.mjs
