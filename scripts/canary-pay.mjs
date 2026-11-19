@@ -37,7 +37,7 @@ const TARGETS = [
   { name: "context-pressure", price: "$0.03", url: `${BASE}/api/bar/x402/context-pressure?remaining_context=8%25` },
   { name: "loop-detect", price: "$0.03", url: `${BASE}/api/bar/x402/loop-detect` },
   { name: "bazaar-index-check", price: "$0.05", url: `${BASE}/api/bar/x402/index-check?payTo=${PAYTO}` },
-  { name: "x402-doctor", price: "$0.25", url: `${BASE}/api/bar/x402/doctor?url=https://api.oatp.cc/tools/tx_explainer` },
+  { name: "x402-doctor", price: "$0.25", url: `${BASE}/api/bar/x402/doctor?url=${encodeURIComponent(`${BASE}/api/bar/stats`)}` },
 ];
 
 // Optional: settle multimodal doors when a public test asset URL is provided.
