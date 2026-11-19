@@ -23,6 +23,7 @@ on:
       - "scripts/x402-multinetwork-selftest.mjs"
       - "scripts/x402-rail-activation-selftest.mjs"
       - "scripts/x402-verify-logging-selftest.mjs"
+      - "scripts/payload-contract-selftest.mjs"
       - "scripts/x402-failure-recovery-selftest.mjs"
       - "scripts/x402-header-size-selftest.mjs"
       - "functions/api/bar/x402/**"
@@ -110,6 +111,9 @@ jobs:
 
       - name: Run x402 verify-logging self-test
         run: node scripts/x402-verify-logging-selftest.mjs
+
+      - name: Run payload-contract self-test (advertised endpoint ↔ payload)
+        run: node scripts/payload-contract-selftest.mjs
 
       - name: Run x402 failure-recovery self-test
         run: node scripts/x402-failure-recovery-selftest.mjs
