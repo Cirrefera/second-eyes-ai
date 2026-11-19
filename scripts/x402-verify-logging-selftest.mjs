@@ -13,7 +13,7 @@
  */
 
 import { redactFacilitatorBody } from "../functions/_lib/x402.js";
-import { composeFailureReason } from "../functions/_lib/x402-payment-log.js";
+import { composeFailureReason, recordX402PaymentAttempt } from "../functions/_lib/x402-payment-log.js";
 
 const failures = [];
 const fail = (where, msg) => failures.push(`${where}: ${msg}`);
@@ -145,6 +145,70 @@ const eq = (where, got, want) => {
   // Bounded to 500 chars.
   const big = composeFailureReason({ error: "e".repeat(900), facilitatorStatus: 500 }, "x");
   if (big.length > 500) fail("compose", `not bounded to 500 (${big.length})`);
+}
+
+// --- 7. Parse-stage junk probes never reach D1; facilitator failures do ---
+{
+  const mockEnv = () => {
+    const calls = { prepare: 0 };
+    const DB = {
+      prepare(sql) {
+        calls.prepare++;
+        return {
+          bind: () => ({ run: async () => ({}) }),
+          run: async () => ({}) ,
+          all: async () => ({ results: [] }),
+        };
+      },
+    };
+    return { env: { DB }, calls };
+  };
+
+  // 7a. Crawler junk (undecodable header rejected at parse stage): console
+  //     line only — no x402_payment_attempts row, no x402_verify_failures row.
+  {
+    const { env, calls } = mockEnv();
+    await recordX402PaymentAttempt(
+      env,
+      "not-a-payment-header",
+      { route: "/api/bar/x402/help-me" },
+      { ok: false, error: "invalid_payment_header", stage: "parse" },
+      null
+    );
+    if (calls.prepare !== 0) {
+      fail("parse-junk", `junk probe touched D1 (${calls.prepare} prepare calls)`);
+    }
+  }
+
+  // 7b. Real facilitator verify failure: persists (attempts + verify-failure rows).
+  {
+    const { env, calls } = mockEnv();
+    await recordX402PaymentAttempt(
+      env,
+      "not-a-payment-header",
+      { route: "/api/bar/x402/help-me" },
+      { ok: false, error: "Payment verification failed", stage: "verify", invalidReason: "insufficient_funds" },
+      null
+    );
+    if (calls.prepare === 0) {
+      fail("facilitator-fail", "real verify failure was not persisted to D1");
+    }
+  }
+
+  // 7c. Successful settle path: attempts row persists as before.
+  {
+    const { env, calls } = mockEnv();
+    await recordX402PaymentAttempt(
+      env,
+      "not-a-payment-header",
+      { route: "/api/bar/x402/help-me" },
+      { ok: true, receipt: { payer: "0xPayer" } },
+      { ok: true, receipt: { payer: "0xPayer" } }
+    );
+    if (calls.prepare === 0) {
+      fail("settle-ok", "successful attempt was not persisted to D1");
+    }
+  }
 }
 
 if (failures.length) {

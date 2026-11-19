@@ -387,11 +387,18 @@ export async function recordX402PaymentAttempt(env, paymentHeader, meta, verifyR
 
   console.log(JSON.stringify({ x402_payment_attempt: record }));
 
+  // Parse-stage rejections (invalid/undecodable payment header, no matching
+  // accept) never reached the CDP facilitator — they are crawler probe noise,
+  // not settlement diagnostics. Sweeps against every door flood the audit
+  // tables and drown real facilitator failures. Console-log only; every
+  // select/verify/settle-stage failure below still persists to D1.
+  const parseJunk = !verifyOk && verifyResult?.stage === "parse";
+
   // Persist recoverable, redacted detail for the FAILED stage (verify, or settle
   // when verify passed) keyed by request id — so a future failure can be
   // diagnosed from D1 alone, without Cloudflare dashboard historical logs.
   const failedResult = !verifyOk ? verifyResult : !settleOk && settleResult != null ? settleResult : null;
-  if (failedResult) {
+  if (failedResult && !parseJunk) {
     await recordX402VerifyFailure(env, failedResult, {
       requestId: meta?.requestId || null,
       route: record.route,
@@ -399,7 +406,7 @@ export async function recordX402PaymentAttempt(env, paymentHeader, meta, verifyR
     });
   }
 
-  if (!env?.DB) return record;
+  if (!env?.DB || parseJunk) return record;
 
   try {
     await ensureX402PaymentLogTable(env);
