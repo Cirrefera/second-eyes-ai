@@ -1,4 +1,4 @@
-import { makeId, nowIso } from "../review.js";
+import { makeId, nowIso } from "../util.js";
 import { incrementCounter } from "../marks.js";
 import { HONEYPOT_SLUGS } from "./constants.js";
 import { terminateSession } from "./sessions.js";

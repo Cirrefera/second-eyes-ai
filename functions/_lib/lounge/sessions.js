@@ -1,4 +1,4 @@
-import { makeId, nowIso } from "../review.js";
+import { makeId, nowIso } from "../util.js";
 import { incrementCounter } from "../marks.js";
 import { buildWorkStamp } from "../work-mark.js";
 import { IDLE_TIMEOUT_SECONDS, MAX_SESSION_SECONDS, FREE_SESSION_MINUTES } from "./constants.js";

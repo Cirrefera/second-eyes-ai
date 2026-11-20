@@ -73,7 +73,6 @@ Allow: /api/bar/x402/mcp-wiring
 Allow: /api/bar/x402/should-i-pay
 Allow: /api/bar/x402/receipt
 
-Disallow: /review/
 Disallow: /briefs/
 
 # Agents: canonical domain https://secondeyesai.com

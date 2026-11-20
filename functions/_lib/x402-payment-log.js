@@ -8,7 +8,7 @@
  * failure_reason: null on full success; otherwise stable machine string
  */
 
-import { makeId, nowIso } from "./review.js";
+import { makeId, nowIso } from "./util.js";
 import { parsePaymentPayloadFromHeader } from "./x402.js";
 
 let tableReady = false;

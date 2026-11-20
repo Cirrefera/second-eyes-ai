@@ -1,6 +1,6 @@
 import { getAgentPlan } from "./access.js";
 import { MICRO_TAP, TOOL_PURCHASE } from "./bar-catalog.js";
-import { makeId } from "./review.js";
+import { makeId } from "./util.js";
 
 export function resolveBarProduct(params) {
   const product = params.get("product");
@@ -112,7 +112,7 @@ export async function authorizeTapAccess(claims, tapSlug, env) {
 
 export async function markMicroRedemption(env, jti, tapSlug, grantId) {
   if (!env.DB || !jti) return;
-  const { nowIso } = await import("./review.js");
+  const { nowIso } = await import("./util.js");
   await env.DB.prepare(
     `INSERT OR IGNORE INTO access_redemptions (id, jti, resource, grant_id, created_at)
      VALUES (?, ?, ?, ?, ?)`

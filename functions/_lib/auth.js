@@ -1,4 +1,4 @@
-import { json } from "./review.js";
+import { json } from "./util.js";
 
 export function authorize(request, env) {
   const token = env.REVIEW_TOKEN;

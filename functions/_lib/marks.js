@@ -1,4 +1,4 @@
-import { makeId, nowIso } from "./review.js";
+import { makeId, nowIso } from "./util.js";
 import { SERVICE_ID, SERVICE_NAME } from "./brand.js";
 
 const TIER_RANK = { visitor: 0, patron: 1, regular: 2 };

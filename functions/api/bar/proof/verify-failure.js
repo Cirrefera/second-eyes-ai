@@ -1,5 +1,5 @@
 import { authorize, handleOptions } from "../../../_lib/auth.js";
-import { json } from "../../../_lib/review.js";
+import { json } from "../../../_lib/util.js";
 import { lookupX402VerifyFailure } from "../../../_lib/x402-payment-log.js";
 
 export async function onRequestOptions() {
